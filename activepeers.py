@@ -27,14 +27,17 @@ _ARGS.add_argument(
     type=int,
 )
 
+
 def get_state_root_hash(peer):
     try:
-        client = NodeClient(NodeConnection(host=peer,port_rpc=7777))
+        client = NodeClient(NodeConnection(host=peer, port_rpc=7777))
         state_root_hash: bytes = client.get_state_root_hash()
-        if isinstance(state_root_hash,bytes): print("http://"+peer+":7777")
+        if isinstance(state_root_hash, bytes):
+            print("http://" + peer + ":7777")
         # print(state_root_hash.hex())
     except Exception as err:
         pass
+
 
 def _main(args: argparse.Namespace):
     # Set client.
@@ -46,19 +49,19 @@ def _main(args: argparse.Namespace):
     active_peers = [x["address"].split(":")[0] for x in node_peers]
 
     # creating process
-    processes_list = [multiprocessing.Process(target=get_state_root_hash,args=(peer,)) for peer in active_peers]
- 
+    processes_list = [multiprocessing.Process(
+        target=get_state_root_hash, args=(peer,)) for peer in active_peers]
+
     print("Active peers:")
     # starting process 1 - n
     for process in processes_list:
         process.start()
- 
+
     time.sleep(1)
     for process in processes_list:
         process.terminate()
 
     print("Done!")
-
 
 
 def _get_client(args: argparse.Namespace) -> NodeClient:
