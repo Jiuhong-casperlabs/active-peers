@@ -9,7 +9,7 @@ from pycspr import NodeConnection
 _ARGS = argparse.ArgumentParser(
     "Demo illustrating how to find active peers.")
 
-# CLI argument: host address of target node - defaults to NCTL node 1.
+# CLI argument: host address of target node - defaults to testnet node 94.130.10.55.
 _ARGS.add_argument(
     "--node-host",
     default="94.130.10.55",
@@ -18,7 +18,7 @@ _ARGS.add_argument(
     type=str,
 )
 
-# CLI argument: Node API JSON-RPC port - defaults to 11101 @ NCTL node 1.
+# CLI argument: Node API JSON-RPC port - defaults to 7777.
 _ARGS.add_argument(
     "--node-port-rpc",
     default=7777,
