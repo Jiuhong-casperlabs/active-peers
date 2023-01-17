@@ -1,10 +1,7 @@
 import argparse
-import typing
-from pprint import pp
 import time
 import multiprocessing
 
-import pycspr
 from pycspr import NodeClient
 from pycspr import NodeConnection
 
@@ -42,7 +39,6 @@ def get_state_root_hash(peer):
 def _main(args: argparse.Namespace):
     # Set client.
     client = _get_client(args)
-    pp(args)
 
     # Query: get_node_peers.
     node_peers = client.get_node_peers()
@@ -52,7 +48,7 @@ def _main(args: argparse.Namespace):
     # creating process
     processes_list = [multiprocessing.Process(target=get_state_root_hash,args=(peer,)) for peer in active_peers]
  
-    print("active peers")
+    print("Active peers:")
     # starting process 1 - n
     for process in processes_list:
         process.start()
