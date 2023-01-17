@@ -10,6 +10,13 @@ _ARGS = argparse.ArgumentParser(
     "Demo illustrating how to find active peers.")
 
 # CLI argument: host address of target node - defaults to testnet node 94.130.10.55.
+# testnet
+#  3.136.227.9
+#  3.23.146.54
+# mainnet:
+#  3.14.161.135
+#  3.12.207.193
+#  3.142.224.108
 _ARGS.add_argument(
     "--node-host",
     default="94.130.10.55",
