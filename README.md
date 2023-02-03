@@ -1,8 +1,6 @@
 
 ## Reason for this tool
-Since the node operator can decide opening or closing 7777 port or customizing the rpc port to rather than 7777 this tool is created.
-
-This tool prints out the active node with 7777 port opened.
+Since the node operator can decide opening or closing 7777, 9999 ports or customizing the ports to others this tool is printing out the active nodes with both 7777 and 9999 ports opened.
 
 ## STEP1
 Install requirements
