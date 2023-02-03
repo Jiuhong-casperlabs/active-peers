@@ -67,7 +67,6 @@ def _main(args: argparse.Namespace):
     processes_list = [multiprocessing.Process(
         target=get_rpc_sse_open, args=(peer,)) for peer in active_peers]
 
-    print("Active peers:")
     # starting process 1 - n
     for process in processes_list:
         process.start()
