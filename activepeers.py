@@ -1,7 +1,8 @@
 import argparse
+import json
 import time
 import multiprocessing
-
+import socket
 from pycspr import NodeClient
 from pycspr import NodeConnection
 
@@ -35,13 +36,27 @@ _ARGS.add_argument(
 )
 
 
-def get_state_root_hash(peer):
+def get_rpc_sse_open(peer):
     try:
-        client = NodeClient(NodeConnection(host=peer, port_rpc=7777))
-        state_root_hash: bytes = client.get_state_root_hash()
-        if isinstance(state_root_hash, bytes):
-            print("http://" + peer + ":7777")
-        # print(state_root_hash.hex())
+        # client = NodeClient(NodeConnection(host=peer, port_rpc=7777))
+        # state_root_hash: bytes = client.get_state_root_hash()
+        # if isinstance(state_root_hash, bytes):
+        #     print("http://" + peer + ":7777")
+        # # print(state_root_hash.hex())
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.8)
+        rpc_result = sock.connect_ex((peer, 7777))  # check rpc port
+        if rpc_result == 0:
+            sock.connect_ex((peer, 9999))  # check sse port
+            if rpc_result == 0:
+                port = {
+                    "RPC": "http://" + peer + ":7777",
+                    "SSE": "http://" + peer + ":9999",
+                }
+                print(json.dumps(port, indent=2))
+        sock.close()
+
     except Exception as err:
         pass
 
@@ -57,7 +72,7 @@ def _main(args: argparse.Namespace):
 
     # creating process
     processes_list = [multiprocessing.Process(
-        target=get_state_root_hash, args=(peer,)) for peer in active_peers]
+        target=get_rpc_sse_open, args=(peer,)) for peer in active_peers]
 
     print("Active peers:")
     # starting process 1 - n
