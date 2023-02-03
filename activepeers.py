@@ -3,8 +3,7 @@ import json
 import time
 import multiprocessing
 import socket
-from pycspr import NodeClient
-from pycspr import NodeConnection
+from pycspr import NodeClient, NodeConnection
 
 # CLI argument parser.
 _ARGS = argparse.ArgumentParser(
@@ -38,12 +37,6 @@ _ARGS.add_argument(
 
 def get_rpc_sse_open(peer):
     try:
-        # client = NodeClient(NodeConnection(host=peer, port_rpc=7777))
-        # state_root_hash: bytes = client.get_state_root_hash()
-        # if isinstance(state_root_hash, bytes):
-        #     print("http://" + peer + ":7777")
-        # # print(state_root_hash.hex())
-
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(0.8)
         rpc_result = sock.connect_ex((peer, 7777))  # check rpc port
@@ -83,7 +76,7 @@ def _main(args: argparse.Namespace):
     for process in processes_list:
         process.terminate()
 
-    print("Done!")
+    print("\nActive peers with rpc and sse ports opened.")
 
 
 def _get_client(args: argparse.Namespace) -> NodeClient:
