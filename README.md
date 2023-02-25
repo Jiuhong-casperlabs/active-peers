@@ -14,23 +14,23 @@ pip install -r requirements.txt
 ### TESTNET
 Any of the following commands
 ```
-python activepeers.py
+python active_rpc_sse.py
 ```
 ```
-python activepeers.py --node-host 3.136.227.9
+python active_rpc_sse.py --node-host 3.136.227.9
 ```
 ```
-python activepeers.py --node-host 3.23.146.54
+python active_rpc_sse.py --node-host 3.23.146.54
 ```
 
 ### MAINNET
 Any of the following commands
 ```
-python activepeers.py --node-host 3.14.161.135
+python active_rpc_sse.py --node-host 3.14.161.135
 ```
 ```
-python activepeers.py --node-host 3.12.207.193
+python active_rpc_sse.py --node-host 3.12.207.193
 ```
 ```
-python activepeers.py --node-host 3.142.224.108
+python active_rpc_sse.py --node-host 3.142.224.108
 ```
