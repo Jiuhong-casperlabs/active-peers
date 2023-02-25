@@ -1,7 +1,5 @@
 import argparse
-import json
-import time
-import multiprocessing
+import threading
 import socket
 from pycspr import NodeClient, NodeConnection
 
@@ -57,17 +55,13 @@ def _main(args: argparse.Namespace):
 
     active_peers = [x["address"].split(":")[0] for x in node_peers]
 
-    # creating process
-    processes_list = [multiprocessing.Process(
+    # creating threads
+    threads_list = [threading.Thread(
         target=get_rpc_sse_open, args=(peer,)) for peer in active_peers]
 
     # starting process 1 - n
-    for process in processes_list:
-        process.start()
-
-    time.sleep(1)
-    for process in processes_list:
-        process.terminate()
+    for thread in threads_list:
+        thread.start()
 
     print("\nActive peers with rest port opened.")
 
