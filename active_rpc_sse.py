@@ -39,22 +39,31 @@ def get_rpc_sse_open(peer):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(0.8)
-        rpc_result = sock.connect_ex((peer, 7777))  # check rpc port
-        if rpc_result == 0:
-            url = f'http://{peer}:9999/events/main'
+        # check rpc port
+        payload = {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "method": "chain_get_state_root_hash",
+            "params": []
+        }
 
-            r = requests.get(url)
-            print(url, r)
-            # sock.connect_ex((peer, 9999))  # check sse port
-            # if rpc_result == 0:
-            #     port = {
-            #         "RPC": "http://" + peer + ":7777",
-            #         "SSE": "http://" + peer + ":9999",
-            #     }
-            #     print(json.dumps(port, indent=2))
+        rpc_result = requests.post(f'http://{peer}:7777/rpc', json=payload)
+
+        if rpc_result.status_code == 200:
+            url = f'http://{peer}:9999'
+
+            resp = requests.get(url)
+            if resp.status_code == 404:
+                port = {
+                    "RPC": "http://" + peer + ":7777",
+                    "SSE": "http://" + peer + ":9999/events/main",
+                }
+                print(json.dumps(port, indent=2))
+
         sock.close()
 
     except Exception as err:
+        # print(peer, err)
         pass
 
 
