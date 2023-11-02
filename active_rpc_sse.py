@@ -2,6 +2,7 @@ import argparse
 import json
 import threading
 import socket
+import requests
 from pycspr import NodeClient, NodeConnection
 
 # CLI argument parser.
@@ -40,13 +41,17 @@ def get_rpc_sse_open(peer):
         sock.settimeout(0.8)
         rpc_result = sock.connect_ex((peer, 7777))  # check rpc port
         if rpc_result == 0:
-            sock.connect_ex((peer, 9999))  # check sse port
-            if rpc_result == 0:
-                port = {
-                    "RPC": "http://" + peer + ":7777",
-                    "SSE": "http://" + peer + ":9999",
-                }
-                print(json.dumps(port, indent=2))
+            url = f'http://{peer}:9999/events/main'
+
+            r = requests.get(url)
+            print(url, r)
+            # sock.connect_ex((peer, 9999))  # check sse port
+            # if rpc_result == 0:
+            #     port = {
+            #         "RPC": "http://" + peer + ":7777",
+            #         "SSE": "http://" + peer + ":9999",
+            #     }
+            #     print(json.dumps(port, indent=2))
         sock.close()
 
     except Exception as err:
