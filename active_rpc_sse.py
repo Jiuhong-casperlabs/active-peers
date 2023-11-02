@@ -1,7 +1,6 @@
 import argparse
 import json
 import threading
-import socket
 import requests
 from pycspr import NodeClient, NodeConnection
 
@@ -37,8 +36,6 @@ _ARGS.add_argument(
 
 def get_rpc_sse_open(peer):
     try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(0.8)
         # check rpc port
         payload = {
             "id": 1,
@@ -59,8 +56,6 @@ def get_rpc_sse_open(peer):
                     "SSE": "http://" + peer + ":9999/events/main",
                 }
                 print(json.dumps(port, indent=2))
-
-        sock.close()
 
     except Exception as err:
         # print(peer, err)

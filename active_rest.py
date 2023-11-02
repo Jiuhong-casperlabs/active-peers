@@ -1,6 +1,6 @@
 import argparse
 import threading
-import socket
+import requests
 from pycspr import NodeClient, NodeConnection
 
 # CLI argument parser.
@@ -35,12 +35,11 @@ _ARGS.add_argument(
 
 def get_rpc_sse_open(peer):
     try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(0.8)
-        rpc_result = sock.connect_ex((peer, 8888))  # check rpc port
-        if rpc_result == 0:
+        url = f'http://{peer}:8888/status'
+
+        resp = requests.get(url)
+        if resp.status_code == 200:
             print(peer)
-        sock.close()
 
     except Exception as err:
         pass
