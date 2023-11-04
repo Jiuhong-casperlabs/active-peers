@@ -40,13 +40,13 @@ def get_rpc_sse_open(peer):
         payload = {
             "id": 1,
             "jsonrpc": "2.0",
-            "method": "chain_get_state_root_hash",
+            "method": "info_get_status",
             "params": []
         }
 
         rpc_result = requests.post(f'http://{peer}:7777/rpc', json=payload)
 
-        if rpc_result.status_code == 200:
+        if rpc_result.status_code == 200 and rpc_result.json()["result"]["reactor_state"] == "KeepUp":
             url = f'http://{peer}:9999'
 
             resp = requests.get(url)
