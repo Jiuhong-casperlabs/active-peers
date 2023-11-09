@@ -13,6 +13,9 @@ pip install -r requirements.txt
 
 ### TESTNET
 Any of the following commands
+
+#### active_rpc_sse
+
 ```
 python active_rpc_sse.py
 ```
@@ -33,4 +36,16 @@ python active_rpc_sse.py --node-host 3.12.207.193
 ```
 ```
 python active_rpc_sse.py --node-host 3.142.224.108
+```
+
+#### active_rest
+
+```
+python active_rest.py
+```
+
+#### active_speculative
+
+```
+python active_speculative.py
 ```
