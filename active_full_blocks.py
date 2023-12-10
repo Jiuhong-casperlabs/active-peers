@@ -48,10 +48,8 @@ def get_rpc_sse_open(peer):
         result = rpc_result.status_code == 200 and rpc_result.json()["result"]
 
         if result["reactor_state"] == "KeepUp" and result["available_block_range"]["low"] == 0:
-            port = {
-                "RPC": "http://" + peer + ":7777"
-            }
-            print(json.dumps(port, indent=2))
+            node = f"http://" + peer + ":7777"
+            print(node)
 
     except Exception as err:
         # print(peer, err)
