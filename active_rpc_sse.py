@@ -2,7 +2,7 @@ import argparse
 import json
 import threading
 import requests
-from pycspr import NodeClient, NodeConnection
+from pycspr import NodeClient, NodeConnectionInfo
 
 # CLI argument parser.
 _ARGS = argparse.ArgumentParser(
@@ -86,7 +86,7 @@ def _get_client(args: argparse.Namespace) -> NodeClient:
     """Returns a pycspr client instance.
 
     """
-    return NodeClient(NodeConnection(
+    return NodeClient(NodeConnectionInfo(
         host=args.node_host,
         port_rpc=args.node_port_rpc
     ))
