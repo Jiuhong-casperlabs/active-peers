@@ -1,5 +1,5 @@
 import subprocess
-import threading
+import concurrent.futures
 from list_ec2 import list_running_ec2
 from random import randrange
 from create_acount import create_target_account
@@ -7,16 +7,26 @@ from create_acount import create_target_account
 COUNT = 10000
 
 
-def choose_node():
+def get_ec2s():
     running_ec2s = list(list_running_ec2().items())
+    return running_ec2s
+
+
+def choose_node(running_ec2s):
     chosen_node = randrange(len(running_ec2s))
     print("chosen node - ", running_ec2s[chosen_node])
     return running_ec2s[chosen_node][1]
 
 
-def myfunc(node_ip, x):
+def myfunc(running_ec2s, x):
     try:
-        # read target account public_key
+
+        # create target account
+        create_target_account(x)
+
+        # choose random ip
+        node_ip = choose_node(running_ec2s)
+       # read target account public_key
         with open(f'key{x}/public_key_hex') as f:
             target_account = f.readline()
 
@@ -49,27 +59,19 @@ def construct_command_transfer(node_ip, target_account):
 
 
 def _main():
-    print("\nCreate accounts:")
-    # creating process to create account
-    threads_list = [threading.Thread(
-        target=create_target_account,  args=(x,)) for x in range(COUNT)]
-
-    # starting process 1 - n
-    for thread in threads_list:
-        thread.start()
-
-    # wait for account creation complete
-    for thread in threads_list:
-        thread.join()
-
+    running_ec2s = get_ec2s()
     # creating process to deploy transfer
-    node_ip = choose_node()
-    threads_list = [threading.Thread(
-        target=myfunc,  args=(node_ip, x)) for x in range(COUNT)]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=75) as executor:
+        # Start the load operations and mark each future with its URL
 
-    # starting process 1 - n
-    for thread in threads_list:
-        thread.start()
+        transfer = {executor.submit(
+            myfunc, running_ec2s, x): x for x in range(100000)}
+        for future in concurrent.futures.as_completed(transfer):
+            url = transfer[future]
+            try:
+                data = future.result()
+            except Exception as exc:
+                print('%r generated an exception: %s' % (url, exc))
 
 
 if __name__ == "__main__":

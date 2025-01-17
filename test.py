@@ -1,35 +1,33 @@
-import threading
-import time
+import concurrent.futures
+import urllib.request
+from stress_rpc import myfunc, choose_node
+URLS = ['http://www.foxnews.com/',
+        'http://www.cnn.com/',
+        'http://europe.wsj.com/',
+        'http://www.bbc.co.uk/',
+        'http://nonexistent-subdomain.python.org/']
+
+# Retrieve a single page and report the URL and contents
 
 
-def target1():
-    time.sleep(0.1)
-    print("target1 running")
-    time.sleep(4)
+def load_url(url, timeout):
+    with urllib.request.urlopen(url, timeout=timeout) as conn:
+        return conn.read()
 
 
-def target2():
-    time.sleep(0.1)
-    print("target2 running")
-    time.sleep(2)
-
-
-def launch_thread_with_message(target, message, args=[], kwargs={}):
-    def target_with_msg(*args, **kwargs):
-        target(*args, **kwargs)
-        print(message)
-    thread = threading.Thread(target=target_with_msg, args=args, kwargs=kwargs)
-    thread.start()
-    return thread
-
-
-if __name__ == '__main__':
-    thread1 = launch_thread_with_message(target1, "finished target1")
-    thread2 = launch_thread_with_message(target2, "finished target2")
-
-    print("main: launched all threads")
-
-    thread1.join()
-    thread2.join()
-
-    print("main: finished all threads")
+# We can use a with statement to ensure threads are cleaned up promptly
+# max_workers=50 is good
+# max_workers=75 is good
+# max_workers=100 is good
+# max_workers=250 bad
+with concurrent.futures.ThreadPoolExecutor(max_workers=75) as executor:
+    # Start the load operations and mark each future with its URL
+    node_ip = choose_node()
+    future_to_url = {executor.submit(
+        myfunc, node_ip, x): x for x in range(100000)}
+    for future in concurrent.futures.as_completed(future_to_url):
+        url = future_to_url[future]
+        try:
+            data = future.result()
+        except Exception as exc:
+            print('%r generated an exception: %s' % (url, exc))
