@@ -1,0 +1,27 @@
+def construct_command_transfer():
+    args_list = \
+        ["./casper-client", "put-transaction", "transfer",
+            "--chain-name", "casper-test-jh",
+            "-n", "http://35.94.144.81:7777/rpc",
+            "--transfer-amount", "2500000000000000",
+            "--secret-key", "faucet_secret_key.pem",
+            "--target", "01d23f9a9f240b4bb6f2aaa4253c7c8f34b2be848f104a83d3d6b9b2f276be28fa",
+            "--id", "40",
+            "--payment-amount", "30000000000",
+            "--gas-price-tolerance", "1",
+            "--standard-payment", "true",
+            "--pricing-mode", "classic"],
+    return args_list
+
+
+def main():
+    result = construct_command_transfer()
+    myresult = [member for member in result]
+    print(type(result[0]))
+    print(result[0])
+    print(type(myresult))
+
+    print(len(myresult))
+
+
+main()

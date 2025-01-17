@@ -1,80 +1,66 @@
 import argparse
 import threading
 import requests
-from pycspr import NodeClient, NodeConnectionInfo
-
-# CLI argument parser.
-_ARGS = argparse.ArgumentParser(
-    "Demo illustrating how to find active peers.")
-
-# CLI argument: host address of target node - defaults to testnet node 94.130.10.55.
-# testnet
-#  3.136.227.9
-#  3.23.146.54
-# mainnet:
-#  3.14.161.135
-#  3.12.207.193
-#  3.142.224.108
-_ARGS.add_argument(
-    "--node-host",
-    default="94.130.10.55",
-    dest="node_host",
-    help="Host address of target node.",
-    type=str,
-)
-
-# CLI argument: Node API JSON-RPC port - defaults to 7777.
-_ARGS.add_argument(
-    "--node-port-rpc",
-    default=7777,
-    dest="node_port_rpc",
-    help="Node API JSON-RPC port.  Typically 7777 on most nodes.",
-    type=int,
-)
+import json
+import random
 
 
-def get_rpc_sse_open(peer):
+def get_peers(node_ip):
     try:
-        url = f'http://{peer}:8888/status'
+        # info_get_peers
+        payload = {
+            "id": 1,
+            "jsonrpc": "2.0",
+            "method": "info_get_peers",
+            "params": []
+        }
+
+        rpc_result = requests.post(f'http://{node_ip}:7777/rpc', json=payload)
+
+        if rpc_result.status_code == 200:
+            return [(peer["address"].split(":")[0])
+                    for peer in rpc_result.json()["result"]["peers"]]
+        return []
+
+    except Exception as err:
+        print(err)
+
+
+def get_rpc_sse_open():
+    try:
+        # nodes_list = get_peers("54.201.37.77")
+        # url = f'http://{random.choice(nodes_list)}:8888/status'
+        url = "http://54.201.37.77:8888/status"
 
         resp = requests.get(url)
         if resp.status_code == 200:
-            print(peer)
+            print(resp.json())
+            print("===")
+            print(json.dumps(resp.json()))
 
     except Exception as err:
         pass
 
 
-def _main(args: argparse.Namespace):
-    # Set client.
-    client = _get_client(args)
+get_rpc_sse_open()
+# def _main(args: argparse.Namespace):
 
-    # Query: get_node_peers.
-    node_peers = client.get_node_peers()
+#     # Query: get_node_peers.
+#     node_peers = client.get_node_peers()
 
-    active_peers = [x["address"].split(":")[0] for x in node_peers]
+#     active_peers = [x["address"].split(":")[0] for x in node_peers]
 
-    # creating threads
-    threads_list = [threading.Thread(
-        target=get_rpc_sse_open, args=(peer,)) for peer in active_peers]
+#     # creating threads
+#     threads_list = [threading.Thread(
+#         target=get_rpc_sse_open, args=(peer,)) for peer in active_peers]
 
-    # starting process 1 - n
-    for thread in threads_list:
-        thread.start()
+#     # starting process 1 - n
+#     for thread in threads_list:
+#         thread.start()
 
-    print("\nActive peers with rest port opened.")
-
-
-def _get_client(args: argparse.Namespace) -> NodeClient:
-    """Returns a pycspr client instance.
-
-    """
-    return NodeClient(NodeConnectionInfo(
-        host=args.node_host,
-        port_rpc=args.node_port_rpc
-    ))
+#     print("\nActive peers with rest port opened.")
 
 
-# Entry point.
-if __name__ == "__main__":
-    _main(_ARGS.parse_args())
+# # Entry point.
+# if __name__ == "__main__":
+#     _main()
