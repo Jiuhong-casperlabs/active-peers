@@ -2,3 +2,27 @@ key*
 myenv
 bk
 .gitignore
+test_file.json
+transfer_file.txt
+transfer_file1.txt
+transfer_file_result.txt
+transfer_file_sign.txt
+mylog
+note
+result_err.json
+result_ok.json
+1234
+__pycache__/
+binary_file
+casper-binary-port-client
+largefile
+make_transfer.py
+casper-client
+result.json
+test.py
+test1.py
+test2.py
+test3.py
+test copy.py
+faucet_secret_key.pem
+casper-client

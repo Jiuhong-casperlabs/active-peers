@@ -20,20 +20,12 @@ def choose_node(running_ec2s):
 
 def myfunc(running_ec2s, x):
     try:
-
-        # create target account
-        create_target_account(x)
-
         # choose random ip
         node_ip = choose_node(running_ec2s)
-       # read target account public_key
-        with open(f'key{x}/public_key_hex') as f:
-            target_account = f.readline()
-
         # transfer to target
-        transfer_command = construct_command_transfer(
-            node_ip, target_account)[0]
-        result = subprocess.run(transfer_command,
+        send_large_file_command = construct_command_send_large_file(
+            node_ip)[0]
+        result = subprocess.run(send_large_file_command,
                                 capture_output=True)
         print(result.returncode)
         print(result.stdout.decode("utf-8"))
@@ -42,17 +34,16 @@ def myfunc(running_ec2s, x):
         print(err)
 
 
-def construct_command_transfer(node_ip, target_account):
+def construct_command_send_large_file(node_ip):
     args_list = \
-        ["./casper-client", "put-transaction", "transfer",
+        ["./casper-client", "put-transaction", "session",
             "--chain-name", "casper-test-jh",
             "-n", f"http://{node_ip}:7777/rpc",
-            "--transfer-amount", "2500000000",
+            "--transaction-path", "/home/ubuntu/my_large_file_3M",
             "--secret-key", "faucet_secret_key.pem",
-            "--target", f"{target_account}",
-            "--id", "40",
-            "--payment-amount", "2500000000",
-            "--gas-price-tolerance", "1",
+            "--payment-amount", "500000000000",
+            "--gas-price-tolerance", "2",
+            # "--install-upgrade",
             "--standard-payment", "true",
             "--pricing-mode", "classic"],
     return args_list
@@ -65,7 +56,7 @@ def _main():
         # Start the load operations and mark each future with its URL
 
         transfer = {executor.submit(
-            myfunc, running_ec2s, x): x for x in range(100000)}
+            myfunc, running_ec2s, x): x for x in range(1000)}
         for future in concurrent.futures.as_completed(transfer):
             url = transfer[future]
             try:
