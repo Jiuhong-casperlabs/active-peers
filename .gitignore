@@ -26,3 +26,7 @@ test3.py
 test copy.py
 faucet_secret_key.pem
 casper-client
+*log*
+config-sidecar-*.toml
+casper-sidecar
+my_python_file.py
